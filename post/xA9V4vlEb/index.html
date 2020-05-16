@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>位运算的一些套路 | WehonQ</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://wehonq.cn/favicon.ico?v=1589645065112">
+<link rel="stylesheet" href="https://wehonq.cn/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="主要是CSAPP课程配套datalab里面的题，还是挺有意思的，记录一下
+1. 在明确知道补码整数类型对应位数为www时，可以通过右移w−1w-1w−1位再与常数1做与操作来得到符号位数值
+假设int类型以4字节(32位bit)表示，则对应..." />
+    <meta name="keywords" content="计算机" />
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://wehonq.cn">
+        <img src="https://wehonq.cn/images/avatar.png?v=1589645065112" class="site-logo">
+        <h1 class="site-title">WehonQ</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://wehonq.cn/post/skills" class="site-nav">
+            技能树
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      万物皆套路
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://wehonq.cn/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">位运算的一些套路</h2>
+            <div class="post-date">2020-02-09</div>
+            
+            <div class="post-content" v-pre>
+              <p>主要是CSAPP课程配套datalab里面的题，还是挺有意思的，记录一下</p>
+<h3 id="1-在明确知道补码整数类型对应位数为w时可以通过右移w-1位再与常数1做与操作来得到符号位数值">1. 在明确知道补码整数类型对应位数为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>时，可以通过右移<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>位再与常数1做与操作来得到符号位数值</h3>
+<p>假设int类型以4字节(32位bit)表示，则对应的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>为32，符号位计算方法如下：</p>
+<pre><code class="language-c++">int sign = (x &gt;&gt; 31) &amp; 1;
+</code></pre>
+<h3 id="2-几乎所有现代机器对右移操作都遵循以下原则有符号数补码使用算术右移左边填充符号位数值-无符号数使用逻辑右移左边填充0">2. 几乎所有现代机器对右移操作都遵循以下原则：有符号数(补码)使用<strong>算术右移(左边填充符号位数值)</strong>, 无符号数使用<strong>逻辑右移(左边填充0)</strong></h3>
+<p>假设int类型以8位bit表示，右移结果如下：</p>
+<pre><code class="language-c++">int x = 0x80; // 1000 0000
+unsigned int y = 0x80; // 1000 0000
+
+x = x &gt;&gt; 2;   // x = 0xE0 (1110 0000)
+y = y &gt;&gt; 2;   // y = 0x20 (0010 0000)
+</code></pre>
+<h3 id="3-二进制补码转换为十进制时最直观的方法是对各数位取对应2的幂级数后相加其中符号位幂级数取负值其余位幂级数取正值">3. 二进制补码转换为十进制时，最直观的方法是对各数位取对应2的幂级数后相加，其中符号位幂级数取负值，其余位幂级数取正值</h3>
+<p>对于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>位补码二进制串:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>=</mo><mo>[</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>2</mn></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>x</mi><mn>0</mn></msub><mo>]</mo></mrow><annotation encoding="application/x-tex">\vec x = [x_{w-1}, x_{w-2}, ..., x_0]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.714em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span>，转换为十进制操作定义为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mn>2</mn><msub><mi>T</mi><mi>w</mi></msub><mo>(</mo><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>)</mo></mrow><annotation encoding="application/x-tex">B2T_w(\vec x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">2</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>表示第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>位的数值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">x_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为最低位，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">x_{w-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>为最高位（符号位），则有：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mn>2</mn><msub><mi>T</mi><mi>w</mi></msub><mo>(</mo><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>)</mo><mo>=</mo><mo>−</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub><msup><mn>2</mn><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>w</mi><mo>−</mo><mn>2</mn></mrow></munderover><msub><mi>x</mi><mi>i</mi></msub><msup><mn>2</mn><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">B2T_w(\vec x) = -x_{w-1}2^{w-1} + \sum_{i=0}^{w-2}x_i2^i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">2</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.072439em;vertical-align:-0.208331em;"></span><span class="mord">−</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.864108em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:3.0787820000000004em;vertical-align:-1.277669em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8011130000000004em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.300005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8746639999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<h3 id="4-全0码-与-全1码-的应用">4. 全0码 与 全1码 的应用</h3>
+<p>假设x和y是8位整型数值，8位全0码为0x00，8位全1码为0xFF，则有如下公式成立：</p>
+<ol>
+<li>x &amp; 0x00 = 0</li>
+<li>x &amp; 0xFF = x</li>
+<li>x | 0x00 = x</li>
+<li>x | 0xFF = 0xFF</li>
+<li>x ^ 0x00 = x</li>
+<li>x ^ 0xFF = ~x</li>
+</ol>
+<h3 id="5-位操作补码整数取负">5. 位操作补码整数取负</h3>
+<blockquote>
+<p><strong>Trick</strong> ：“取反加1”</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * negate - return -x 
+ *   Example: negate(1) = -1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 5
+ *   Rating: 2
+ */
+int negate(int x) {
+  return ~x + 1;
+}
+</code></pre>
+<h3 id="6-位操作判断某些二进制位是否为1">6. 位操作判断某些二进制位是否为1</h3>
+<blockquote>
+<p><strong>Trick</strong> ：与掩码做&quot;与&quot;操作后的值如果与掩码相同则可以确定相应位置全为1</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * allOddBits - return 1 if all odd-numbered bits in word set to 1
+ *   where bits are numbered from 0 (least significant) to 31 (most significant)
+ *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 2
+ */
+int allOddBits(int x) {
+  int mask = 0xAA;
+  mask += (mask &lt;&lt; 8);
+  mask += (mask &lt;&lt; 16);
+  return !((mask &amp; x) ^ mask);
+}
+</code></pre>
+<h3 id="7-位操作判断一个数是否在取值范围内">7. 位操作判断一个数是否在取值范围内</h3>
+<blockquote>
+<p><strong>Trick</strong> ：要判断 a &lt;= x &lt;= b 是否成立, 可以转换为判断 x-a &gt;= 0 &amp;&amp; x-(b+1) &lt; 0 是否成立，进而转换为判断 x-a 和 x-(b+1) 的符号</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * isAsciiDigit - return 1 if 0x30 &lt;= x &lt;= 0x39 (ASCII codes for characters '0' to '9')
+ *   Example: isAsciiDigit(0x35) = 1.
+ *            isAsciiDigit(0x3a) = 0.
+ *            isAsciiDigit(0x05) = 0.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 15
+ *   Rating: 3
+ */
+int isAsciiDigit(int x) {
+  int lower = x + (~0x30 + 1);
+  int upper = x + (~0x3a + 1);
+  // return 1 if lower &gt;= 0 and upper &lt; 0
+  return !((lower &gt;&gt; 31) | ~(upper &gt;&gt; 31));
+}
+</code></pre>
+<h3 id="8-位操作实现三目运算">8. 位操作实现三目运算</h3>
+<blockquote>
+<p><strong>Trick</strong> ：bool型数值（0或1）取负正好可以得到全0码或全1码（0x00或0xFF）</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * conditional - same as x ? y : z 
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+  x = !!x;     // 0x01 or 0x00
+  x = ~x + 1;  // 0xff or 0x00
+  return (x &amp; y) | (~x &amp; z);
+}
+</code></pre>
+<h3 id="9-位操作判断两数大小">9. 位操作判断两数大小</h3>
+<blockquote>
+<p><strong>Trick</strong> ：判断符号相同或不同可以使用异或操作，符号不同时正数大，符号相同时判断差值</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * isLessOrEqual - if x &lt;= y  then return 1, else return 0 
+ *   Example: isLessOrEqual(4,5) = 1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 24
+ *   Rating: 3
+ */
+int isLessOrEqual(int x, int y) {
+  int is_x_neg = (x &gt;&gt; 31);
+  int is_y_neg = (y &gt;&gt; 31);
+  int is_y_sub_x_neg = ((y + ~x + 1) &gt;&gt; 31);
+  int is_diff_sign = is_x_neg ^ is_y_neg;
+  return (!is_diff_sign &amp; !is_y_sub_x_neg) | (is_diff_sign &amp; !is_y_neg);
+}
+</code></pre>
+<h3 id="10-位操作实现否运算">10. 位操作实现“否”运算</h3>
+<pre><code class="language-c++">/* 
+ * logicalNeg - implement the ! operator, using all of 
+ *              the legal operators except !
+ *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
+ *   Legal ops: ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 4 
+ */
+int logicalNeg(int x) {
+  return ((x | (~x + 1)) &gt;&gt; 31) + 1;
+}
+</code></pre>
+<h3 id="11-位操作判断一个数最少需要多少bit表示">11. 位操作判断一个数最少需要多少bit表示</h3>
+<blockquote>
+<p><strong>Trick1</strong>：<br>
+若为正数，找到最高一位1，再加上一个符号位<br>
+若为负数，找到最高一位0，再加上一个符号位</p>
+<p>示例：<br>
+-3可以表示为101、1101、11101等，但最高以为0都是出现在第2位，当使用3位以上bit表示的时候高位均为1，所以最少需要2+1=3位bit来表示，也就是101</p>
+</blockquote>
+<blockquote>
+<p><strong>Trick2</strong>：<br>
+为了统一操作可以把负数转换为正数，则只要找最高位1即可</p>
+</blockquote>
+<blockquote>
+<p><strong>Trick3</strong>：<br>
+可以使用二分思想移位，来排除或确定某一半的高位是否存在1</p>
+<p>大致思想如下（x为n位二进制正数）：</p>
+<blockquote>
+<p>（1）令 b = x &gt;&gt; (n/2)，若 b = 0 表示高 n/2 位中不包含1，只需在低 n/2 位中寻找1即可，反之若 b != 0 则表示高 n/2 位中包含1。<br>
+（2）当 b != 0 时可以很容易想到令 x = x &gt;&gt; (n/2) 来移除低 n/2 位，再令 n = n/2 并重复步骤（1）来判断剩余一半的情况；而当 b = 0 时，需要考虑的是低 n/2 ，此时可以先令 n = n/2，再令 x = x &gt;&gt; (n/2) ，由于已经可以确定高 n/2 位全为0，此时只需要右移余下的一半（即 n/4）即可继续二分判断。</p>
+</blockquote>
+</blockquote>
+<pre><code class="language-c++">/* howManyBits - return the minimum number of bits required to represent x in
+ *             two's complement
+ *  Examples: howManyBits(12) = 5
+ *            howManyBits(298) = 10
+ *            howManyBits(-5) = 4
+ *            howManyBits(0)  = 1
+ *            howManyBits(-1) = 1
+ *            howManyBits(0x80000000) = 32
+ *  Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *  Max ops: 90
+ *  Rating: 4
+ */
+int howManyBits(int x) {
+  // 如果是负数取反, 统一转换为找最高位1
+  // is_neg = 0  --&gt; 0xff &amp; x --&gt; x
+  // is_neg = 1  --&gt; (0xfe &amp; x) | (0x01 &amp; ~x) --&gt; ~x
+  int is_neg = (x &gt;&gt; 31);
+  x = (~is_neg &amp; x) | (is_neg &amp; ~x);
+
+  // 二分法找最高位1
+  // 每次右移n/2或0位,来判断高位是否包含1并缩小搜索范围
+  int b16, b8, b4, b2, b1, b0;
+  b16 = (!!(x &gt;&gt; 16)) &lt;&lt; 4; // if high 16 bits has 1 b16 = 16 else b16 = 0
+  x = x &gt;&gt; b16;
+  b8 = (!!(x &gt;&gt; 8)) &lt;&lt; 3;
+  x = x &gt;&gt; b8;
+  b4 = (!!(x &gt;&gt; 4)) &lt;&lt; 2;
+  x = x &gt;&gt; b4;
+  b2 = (!!(x &gt;&gt; 2)) &lt;&lt; 1;
+  x = x &gt;&gt; b2;
+  b1 = !!(x &gt;&gt; 1);
+  x = x &gt;&gt; b1;
+  b0 = x;
+
+  return b16 + b8 + b4 + b2 + b1 + b0 + 1;
+}
+</code></pre>
+<h3 id="11-快速找到补码二进制最低位的1的位置">11. 快速找到补码二进制最低位的1的位置</h3>
+<blockquote>
+<p><strong>Trick</strong>: 二进制取负变换可以快速写成除最低位1之后的所有位都取反<br>
+例：假设x为8位bit表示的int，x = 12，则x和~x+1的二进制表示分别为：<br>
+0 0 0 0 1 1 0 0<br>
+1 1 1 1 0 1 0 0<br>
+x &amp; (~x + 1) 即可以得到只剩最低位1的二进制表示 0 0 0 0 0 1 0 0</p>
+</blockquote>
+<pre><code class="language-c++">int x = 12;
+unsigned int y = x &amp; (~x + 1);
+int pos = 0;
+while (y &gt; 0) {
+  y &gt;&gt;= 1;
+  ++pos;
+}
+// finally pos = 3
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://wehonq.cn/tag/Phfmx4DWm/" class="tag">
+                    计算机
+                  </a>
+                
+              </div>
+            
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>
