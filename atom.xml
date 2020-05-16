@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://wehonq.cn</id>
+    <title>WehonQ</title>
+    <updated>2020-05-16T15:38:41.275Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://wehonq.cn"/>
+    <link rel="self" href="https://wehonq.cn/atom.xml"/>
+    <subtitle>万物皆套路</subtitle>
+    <logo>https://wehonq.cn/images/avatar.png</logo>
+    <icon>https://wehonq.cn/favicon.ico</icon>
+    <rights>All rights reserved 2020, WehonQ</rights>
+    <entry>
+        <title type="html"><![CDATA[Matplotlib库基本认识]]></title>
+        <id>https://wehonq.cn/post/218Cir4H7/</id>
+        <link href="https://wehonq.cn/post/218Cir4H7/">
+        </link>
+        <updated>2020-05-16T15:17:33.000Z</updated>
+        <content type="html"><![CDATA[<p>平时经常需要使用matplotlib库来画图分析数据，但总是记不住里面的一些基本操作，比如subplot的布局、坐标轴和标题的设置等等，主要原因还是对matplotlib的基础体系不太了解，最近好好看了一下官方文档，记录一下相关要点。</p>
+<p>官方参考：https://matplotlib.org/tutorials/introductory/usage.html#sphx-glr-tutorials-introductory-usage-py</p>
+<h2 id="安装-示例">安装 &amp; 示例</h2>
+<pre><code class="language-shell">&gt;&gt; pip install matplitlib
+</code></pre>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/wehonq/pic/raw/master/sphx_glr_usage_001.png" alt="../../_images/sphx_glr_usage_001.png" loading="lazy"></figure>
+<h2 id="基本组成">基本组成</h2>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/wehonq/pic/raw/master/anatomy.png" alt="../../_images/anatomy.png" loading="lazy"></figure>
+<ul>
+<li>
+<p><strong>Figure</strong></p>
+<p>可以理解为最外层的绘图控件，可以是一个程序窗口或者jupyter中的绘图控件等。一个Figure包含若干个Axes（一般至少一个）。一般有以下几种创建方法：</p>
+<pre><code class="language-python">fig = plt.figure()  # an empty figure with no Axes
+fig, ax = plt.subplots()  # a figure with a single Axes
+fig, axs = plt.subplots(2, 2)  # a figure with a 2x2 grid of Axes
+</code></pre>
+</li>
+<li>
+<p><strong>Axes</strong></p>
+<p>可以理解为Figure中的子图，Axes必须挂接在Figure上，Figure中可以包含多个Axes。一个Axes是一个独立的绘图区域，包含自己的坐标轴（Axis），并且可以设置坐标轴的limit和label</p>
+</li>
+<li>
+<p><strong>Axis</strong></p>
+<p>可以理解为Axes中的坐标轴。</p>
+</li>
+<li>
+<p><strong>Artist</strong></p>
+<p>基本上所有在图上能看到的东西都是Artist，包括文本、线条等。大部分Artist都被绑定在一个Axes内。</p>
+</li>
+</ul>
+<h2 id="输入类型">输入类型</h2>
+<p>官网给出的说明是只支持<code>numpy.array</code>和<code>numpy.ma.masked_array</code>类型的输入格式，如果想使用<code>pandas.DataFream</code>或者<code>numpy.matrix</code>最好是转换成<code>numpy.array</code></p>
+<pre><code class="language-python"># convert pandas.DataFrame
+a = pandas.DataFrame(np.random.rand(4,5), columns = list('abcde'))
+a_asarray = a.values
+
+# convert numpy.matrix
+b = np.matrix([[1, 2], [3, 4]])
+b_asarray = np.asarray(b)
+</code></pre>
+<h2 id="绘图接口">绘图接口</h2>
+<p>主要有两种方法调用绘图接口：</p>
+<ul>
+<li>显式创建figure和axes，然后调用figure和axes的方法来绘制（OO-style）</li>
+<li>直接使用pyplot的接口，实际上这种方式会自动创建和管理figure和axes</li>
+</ul>
+<h4 id="显示创建oo-style">显示创建（OO-style）</h4>
+<pre><code class="language-python">x = np.linspace(0, 2, 100)
+
+# Note that even in the OO-style, we use `.pyplot.figure` to create the figure.
+fig, ax = plt.subplots()  # Create a figure and an axes.
+ax.plot(x, x, label='linear')  # Plot some data on the axes.
+ax.plot(x, x**2, label='quadratic')  # Plot more data on the axes...
+ax.plot(x, x**3, label='cubic')  # ... and some more.
+ax.set_xlabel('x label')  # Add an x-label to the axes.
+ax.set_ylabel('y label')  # Add a y-label to the axes.
+ax.set_title(&quot;Simple Plot&quot;)  # Add a title to the axes.
+ax.legend()  # Add a legend.
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/wehonq/pic/raw/master/sphx_glr_usage_003.png" alt="../../_images/sphx_glr_usage_003.png" loading="lazy"></figure>
+<h4 id="pyplot接口">pyplot接口</h4>
+<pre><code class="language-python">x = np.linspace(0, 2, 100)
+
+plt.plot(x, x, label='linear')  # Plot some data on the (implicit) axes.
+plt.plot(x, x**2, label='quadratic')  # etc.
+plt.plot(x, x**3, label='cubic')
+plt.xlabel('x label')
+plt.ylabel('y label')
+plt.title(&quot;Simple Plot&quot;)
+plt.legend()
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/wehonq/pic/raw/master/sphx_glr_usage_004.png" alt="../../_images/sphx_glr_usage_004.png" loading="lazy"></figure>
+<p>官网说明还有第三种用于嵌入GUI应用的调用方式，但是这里不做讨论。</p>
+<p>两种方法都可以使用，但是最好在一个项目流程里面只使用一种，官方推荐在像jupyter这种交互式应用场景中使用pyplot接口的调用方式，而在更大型一点的项目中使用OO-style的接口。</p>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>有些其他文档会给出<code>from pylab import *</code>这样的引包用法，这种实际上是一种早期的MATLAB-like style, 会同时引入pyplot和numpy，但是现在这种方式已经极度不推荐使用了。</p>
+<pre><code class="language-python">from pylab import *
+
+x = linspace(0, 2, 100)
+plot(x, x, label='linear')
+...
+</code></pre>
+</blockquote>
+<p>如果经常要在不同数据集上绘制相同的图形，可以考虑封装一个专门的函数：</p>
+<pre><code>def my_plotter(ax, data1, data2, param_dict):
+    &quot;&quot;&quot;
+    A helper function to make a graph
+
+    Parameters
+    ----------
+    ax : Axes
+        The axes to draw to
+
+    data1 : array
+       The x data
+
+    data2 : array
+       The y data
+
+    param_dict : dict
+       Dictionary of kwargs to pass to ax.plot
+
+    Returns
+    -------
+    out : list
+        list of artists added
+    &quot;&quot;&quot;
+    out = ax.plot(data1, data2, **param_dict)
+    return out
+</code></pre>
+<p>然后可以这样调用：</p>
+<pre><code class="language-python">fig, (ax1, ax2) = plt.subplots(1, 2)
+my_plotter(ax1, data1, data2, {'marker': 'x'})
+my_plotter(ax2, data3, data4, {'marker': 'o'})
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/wehonq/pic/raw/master/sphx_glr_usage_006.png" alt="../../_images/sphx_glr_usage_006.png" loading="lazy"></figure>
+<h2 id="关于后端backends">关于后端(Backends)</h2>
+<p>可以理解为绘制图像的不同底层实现，用于支持不同的展现和输出形式(jupyter、qt4或者是PNG等图片格式)，这里暂时先不做深入研究了，等后续真正需要再来看。</p>
+<h2 id="交互式模式interactive-mode">交互式模式(Interactive mode)</h2>
+<p>个人理解：普通模式下，要输出图像需要调用<code>plt.show()</code>，这会阻塞进程，并将之前的绘图操作全部整合起来输出到一个画布上；交互式模式下，会从另一个进程打开画布，并且当前进程下的绘图操作都会即时绘制到画布上。</p>
+<p>通过调用<code>matplotlib.pyplot.ion()</code>来打开交互模式，调用<code>matplotlib.pyplot.ioff()</code>关闭交互模式。</p>
+<h4 id="交互模式示例">交互模式示例</h4>
+<pre><code class="language-python"># 在python-shell运行
+&gt;&gt; import matplotlib.pyplot as plt
+&gt;&gt; plt.ion()                             # 开启交互模式
+&gt;&gt; plt.plot([1.6, 2.7])                # 这时候已经拉起了绘图窗口
+&gt;&gt; plt.title(&quot;interactive test&quot;)    # 这里开始的每一步操作都会即时在图面上显示
+&gt;&gt; plt.xlabel(&quot;index&quot;)
+&gt;&gt; ax = plt.gca()                    # 对内部的Axes操作也可以
+&gt;&gt; ax.plot([3.1, 2.2])
+</code></pre>
+<p>某些老版本matplotlib可能需要调用<code>plt.draw()</code>才能即时刷新</p>
+<h4 id="非交互模式示例">非交互模式示例</h4>
+<pre><code class="language-Python"># 在python-shell运行
+&gt;&gt; import matplotlib.pyplot as plt
+&gt;&gt; plt.ioff()                      # 关闭交互模式
+&gt;&gt; plt.plot([1.6, 2.7])         # 不会拉起绘图窗口
+&gt;&gt; plt.show()                   # 显式调用show()才会拉起绘图窗口, 同时阻塞当前进程
+</code></pre>
+<pre><code class="language-python"># python脚本
+# 当遇到一个show()调用时打开一个绘图窗口并阻塞, 关闭窗口之后会继续执行之后的代码
+# 再次遇到show()时又再打开一个绘图窗口, 直到循环结束
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.ioff()
+for i in range(3):
+    plt.plot(np.random.rand(10))
+    plt.show()
+</code></pre>
+<h2 id="关于性能performance">关于性能(Performance)</h2>
+<p>Matplotlib可以根据需要适当损失一些效果来换取更快的绘图速度，这一部分也太深入研究，大致过了一下方法。</p>
+<p>当需要考虑性能时主要可以用以下几种方法：</p>
+<ul>
+<li>线段简化</li>
+<li>Marker简化</li>
+<li>按块分割线</li>
+<li>显式指定图例位置</li>
+<li>使用fast风格</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[《Comprehensive data exploration with Python》阅读笔记]]></title>
+        <id>https://wehonq.cn/post/VTsgaxnKP/</id>
+        <link href="https://wehonq.cn/post/VTsgaxnKP/">
+        </link>
+        <updated>2020-05-13T16:57:42.000Z</updated>
+        <content type="html"><![CDATA[<p>原文是Kaggle上针对<em>House Prices</em>这个教学比赛的一篇入门教程，网上也是很多人推荐，看过之后确实是有一定的收获，应该算是一篇入坑的启蒙教程了。很早之前想入坑Kaggle的时候其实已经看过了，但一直没有系统整理过这方面的知识体系，这次决定把原文笔记整理出来，方便今后查阅，同时也挖几个坑来跳一下。</p>
+<p><em>原文链接：https://www.kaggle.com/pmarcelino/comprehensive-data-exploration-with-python</em></p>
+<p>对的，万物皆套路：</p>
+<blockquote>
+<p><strong>The most difficult thing in life is to know yourself</strong></p>
+</blockquote>
+<h1 id="分析和解决数据问题的一般套路">分析和解决数据问题的一般套路</h1>
+<ol>
+<li><strong>认识问题</strong>：认真研究每个变量，分析其对目标问题的意义和重要程度</li>
+<li><strong>目标分析</strong>：聚焦于目标字段，试图对其做更深入的了解</li>
+<li><strong>相关性分析</strong>：尝试分析特征和目标之间的相关性</li>
+<li><strong>数据预处理</strong>：清理数据集，处理缺失值、异常值以及类别特征</li>
+</ol>
+<p>下面就展开来谈了：</p>
+<h1 id="一-认识问题">一. 认识问题</h1>
+<p>拿到任务后的第一步就是要对问题和数据集有一个整体性的认识，包括每个特征的含义以及它与问题目标的相关性。这一步很重要，虽然非常耗时，但对全面掌握任务的全貌非常有帮助。</p>
+<p>文中给出了一种比较良好方法：</p>
+<p>按以下列表头的形式创建一个Excel表格，并逐行填写特征：</p>
+<ul>
+<li><strong>Variable</strong> - 特征名称</li>
+<li><strong>Type</strong> - 特征类型，数值型或类别型，分别对应连续型特征和离散型特征</li>
+<li><strong>Segment</strong> - 特征所反映实际问题某一方面的信息。文中针对房价预测问题给出了三个方面：building(物理建筑)、space(空间)、location(地理位置)。例如：OverallQual(整体完成品质) 反映了building方面的信息，TotalBsmtSF(地下室总面积) 反映了space方面的信息，Neighborhood(街区)反映了location方面的信息。</li>
+<li><strong>Expectation</strong> - 预期特征的重要程度，可以用“高”，“中”，“低”来表示</li>
+<li><strong>Conclusion</strong> - 观察数据后得出特征重要度的结论，同样用“高”，&quot;中&quot;，“低”来表示</li>
+<li><strong>Comments</strong> - 备注</li>
+</ul>
+<blockquote>
+<p>挖个坑：原文中对Type只定义了数值和类别型两种（下文可以看出作者将时间当做类别型看待），但感觉在某些任务中时间类型应该单独算作第三种类型，比如针对用户购买行为的任务，时序特征往往也是一种重要的参考，待研究</p>
+</blockquote>
+<p>为了填写<code>Expectation</code> ，在每遇到一个特征的时候，问自己几个问题（文中以房价预测为说明，可推广到其他问题）：</p>
+<ol>
+<li>当我们买房的时候是否会考虑这个特征？</li>
+<li>如果考虑，那这个特征的重要程度如何？</li>
+<li>这个特征所反映的信息是否已经由别的特征反映过了？</li>
+</ol>
+<p>通过这样的方式得到一系列Expectation标注为“高”的特征后，可以画出这些特征与房屋价格的散点图或箱型图，通过观察再来填写<code>Conclusion</code></p>
+<p>下面是根据以上方法得到的4个重要特征的示例表格：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004414.png" alt="image-20200514003124122" loading="lazy"></figure>
+<h1 id="二-目标分析">二. 目标分析</h1>
+<p>目标分析就是对因变量做一些统计学上的分析，比较常见的有判断目标分布的正态性等等</p>
+<p>首先观察一下目标<code>SalePrice</code>字段的基本信息，并且画出直方图：</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004350.png" alt="image-20200512004237776" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004351.png" alt="image-20200512001710378" loading="lazy"></figure>
+<p>能够观察到房屋价格呈现明显的正偏态分布，那就看一下偏度和峰度：</p>
+<blockquote>
+<p>挖个坑：偏度和峰度的意义</p>
+</blockquote>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004352.png" alt="image-20200512002203730" loading="lazy"></figure>
+<p>这里作者没有太详细去分析，只是简单过了一下，后续的数据预处理会有针对非正态分布的处理方法</p>
+<h1 id="三-相关性分析">三. 相关性分析</h1>
+<h2 id="直观分析">直观分析</h2>
+<p>先来看一下GrLivArea(地上居住面积)这个特征和房屋价格的关系：</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004353.png" alt="image-20200512002838149" loading="lazy"></figure>
+<p>可以看出居住面积与房屋价格基本呈现正线性关系。</p>
+<p>再来看看TotalBsmtSF(地下室总面积)与房屋价格的关系：</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004354.png" alt="image-20200512003345847" loading="lazy"></figure>
+<p>前半部分同样是正线性关系，但随着TotalBsmtSF增大到一定程度房屋价格就不再上升了。</p>
+<p>下面再看看两个类别型特征和房屋价格的关系，因为是类别特征，这里需要用箱型图取代散点图：</p>
+<blockquote>
+<p>挖个坑：各种数据分析图的用法套路</p>
+</blockquote>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004355.png" alt="image-20200512003530311" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004356.png" alt="image-20200512005001286" loading="lazy"></figure>
+<p>可以看出，质量越高的房屋售价越高，这很符合常理，而年代与房屋价格虽然呈现出新房价格更高，但不是特别明显，甚至某些很古老的房子价格反而更高，这其实也比较符合直觉，想想北上广深的二手房？</p>
+<p>总的来说，这一步得到了4个特征与目标价格之间的关系：</p>
+<ul>
+<li><code>居住面积</code>和<code>地下室面积</code>似乎与房屋价格呈现正线性关系，并且<code>地下室面积</code>的斜率更高</li>
+<li><code>完成质量</code>和<code>建筑年份</code>与房屋价格也有较强的关联，并且<code>完成质量</code>的影响程度更高</li>
+</ul>
+<p>以上这些做法还是比较偏主观的，基本是想到一个特征分析一个特征，并不能够很好的掌握数据的全貌，所以作者接下来给出了更加客观的方法：<strong>相关性矩阵热力图</strong> 、<strong>散点图矩阵</strong></p>
+<h2 id="相关性矩阵热力图">相关性矩阵热力图</h2>
+<p>首先是针对所有变量间的相关性热力图，这可以快速发现线性相关的变量，如下图中颜色越浅的表示正相关性越强，越深表示负相关性越强：</p>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004357.png" alt="image-20200512005027809" loading="lazy"></figure>
+<p>第二个是与房价正相关性靠前的10特征的相关性矩阵热力图，基本原理一样，只是简单筛选后加了个数值标签：</p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004358.png" alt="image-20200513003400414" loading="lazy"></figure>
+<p>通过观察这种相关性矩阵热力图可以比较方便的发现特征与目标之间的线性相关性，也可以发现特征与特征之间的相关性，前者用来发现特征重要性，后者用来做特征降维。比如<code>OverallQual</code>和<code>GrLivArea</code>就与<code>SalePrice</code>有较强的相关性，表示这两个特征都比较厉害，<code>GarageCars</code>和<code>GarageArea</code>相关性很强，表明这两个特征几乎表达了一样的信息，实际使用时保留一个即可。</p>
+<h2 id="散点图矩阵">散点图矩阵</h2>
+<p>接着是散点图矩阵图，这个图比起手动画出两两变量的散点图更加方便，能够一目了然的发现变量之间的联系，又是一个套路点。</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004359.png" alt="image-20200513005507074" loading="lazy"></figure>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004634.png" alt="img" loading="lazy"></figure>
+<p>原文分析得到了结论<code>TotalBsmtSF</code>和<code>TotalBsmtSF</code>的散点图具有明显的边界，这是符合直觉的，因为一般来说没有地下室面积比地上面积更大的，除非买的是一个地窖。</p>
+<h1 id="四-数据预处理">四. 数据预处理</h1>
+<p>在进行了一系列数据分析之后，对数据应该是已经有了一个大致的掌握了，接下来就应该着手处理数据了，我理解的预处理应该指的就是在运用模型算法之前对数据进行的通用性处理过程，即不介入特征工程的工作。原文主要介绍了三方面的预处理：<strong>缺失值处理</strong>、<strong>异常值处理</strong>和<strong>数据变换</strong>。</p>
+<h2 id="缺失值处理">缺失值处理</h2>
+<p>缺失值在真实场景中经常遇到，几乎成了数据分析和机器学习工程绕不开的一个步骤，是需要重点分析和处理的。很多模型工具包如XGBoost、LightGBM等虽然都可以支持缺失值的处理，但其处理方法往往都是机械性地，有条件的话还是应该尽量人工来处理。</p>
+<p>在处理缺失值的时候要关心下面两个问题：</p>
+<ul>
+<li>数据的缺失有多普遍？</li>
+<li>数据的缺失是随机的还是有规律的？</li>
+</ul>
+<p>这样做的目的是尽可能减少样本信息的损失，以及避免规律性的缺失导致数据存在隐藏的偏差。</p>
+<p>先打印一下缺失值情况的情况：</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004400.png" alt="image-20200513213446912" loading="lazy"></figure>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004401.png" alt="image-20200513220328487" loading="lazy"></figure>
+<p>原文给出了一个指导性原则，即当特征字段缺失比例超过15%的时候应该直接直接删除该特征，在这个问题中观察头部的几个缺失特征，确实是可以安全删除。此外，<code>GarageXX</code> <code>BsmtXX</code> <code>MasVnrXX</code>这三类特征虽然缺失比例不高，但由于与其他特征有较强的相关性，因此也可以安全删除。最后<code>Electrical</code>只有一条缺失数据，有理由相信是一个偶然因素导致的样本缺失，直接将对应的样本删除即可。</p>
+<p>总的来说原文实际上是删除了所有缺失的字段或者样本，并没有提到针对缺失值的填充方法，实际上真实场景下缺失值的处理是一个比较繁琐的过程，遇到一些不能删除的重要特征要想办法进行填充，填充的方法也有很多种，如固定值填充、均值填充、众数填充等。</p>
+<blockquote>
+<p>挖个坑：缺失值处理的套路</p>
+</blockquote>
+<h2 id="异常值处理">异常值处理</h2>
+<p>异常值也叫离群值，也是需要重点关注的问题，因为某些模型会对异常值非常敏感，此外，对异常值的分析可以帮助我们对特定行为的理解。原文分别用<strong>单变量分析</strong>和<strong>双变量分析</strong>两种方法来处理异常值：</p>
+<h3 id="单变量分析">单变量分析</h3>
+<p>主要就是针对变量自身的分布情况进行分析，划定一个置信阈值，在阈值范围以外的则认为是异常值，这里主要是通过标准化均值和方差来分析</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004402.png" alt="image-20200513220508275" loading="lazy"></figure>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004403.png" alt="image-20200513223446032" loading="lazy"></figure>
+<p>这里将房价做标准化后分别输出了最小和最大的10个值，通过观察可以发现</p>
+<ul>
+<li>最小的几个取值比较接近，且都比较接近标准均值0</li>
+<li>最大的几个取值差别较大，且离标准均值0都较远</li>
+</ul>
+<p>原文这里没有鲁莽的将任何值当做奇异值，但是给与了这两个7.xx的取值一定的关注</p>
+<h3 id="双变量分析">双变量分析</h3>
+<p>双变量分析的好处是可以从明显呈现相关性的散点图中发现不合群的数据，一般来说这种数据是异常值的可能性会比较大。</p>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004404.png" alt="image-20200513223504967" loading="lazy"></figure>
+<p>文中首先对上面<code>GrLivArea</code>和<code>SalePrice</code>的散点图进行了分析，可以明显看出红框的两个点有很大概率是异常值，因为他们独立于整体相关性分布之外。另外绿色圆圈内的两个点是之前通过单变量分析重点关注的两个7.xx的值，这里可以看出虽然他们的取值比较偏离均值，但由于其依然是处于整体相关性分布之内的，因此有理由相信这两个值是正常的，这里先给予保留。</p>
+<p>对<code>TotalBsmtSF</code>和<code>SalePrice</code>的散点图分析也类似，虽然乍一看绿色圆圈内的三个点是远离群体的，但由于其任然是处于整体相关性分布之内的，因此可以容忍性地先保留住。</p>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004405.png" alt="image-20200513225601483" loading="lazy"></figure>
+<h2 id="数据变换">数据变换</h2>
+<p>原味这部分给的标题是<em>Getting hard core</em>，实际上说的就是如何通过变换让数据满足统计学上的基础假设，从而更好的应用一些统计学的分析技术。作者引用 <a href="https://amzn.to/2uC3j9p">Hair et al. (2013)</a>说明了总共有四种假设需要验证：</p>
+<ul>
+<li><strong>正态性</strong> - 正态性指的是数据的分布应该要大致符合正态分布</li>
+<li><strong>同方差性</strong> - 指的是目标变量在特征变量的任何取值区间都具有相同的方差性</li>
+<li><strong>线性</strong> - 就是字面意思的线性相关</li>
+<li><strong>无相关性误差</strong> - 指的是一个错误与另一个错误有关联</li>
+</ul>
+<p>下面只讲正态性和同方差性</p>
+<h4 id="正态性">正态性</h4>
+<p>在检测数据是否符合正态分布时有两种常用的方法：<strong>直方图</strong>、<strong>P-P图</strong>或<strong>Q-Q图</strong></p>
+<figure data-type="image" tabindex="19"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004711.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="20"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004714.png" alt="img" loading="lazy"></figure>
+<p>这里先给出了房价的直方图和Q-Q图，可以明显发现是非正态的，幸运的是这个形态符合一个正偏态，因此做一个简单的log转换就可以修正：</p>
+<figure data-type="image" tabindex="21"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004407.png" alt="image-20200513235909537" loading="lazy"></figure>
+<figure data-type="image" tabindex="22"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004408.png" alt="image-20200514000204857" loading="lazy"></figure>
+<p>类似地，可以对相同情况的特征变量应用相同的变换，如<code>GrLivArea</code>。</p>
+<p>接下来，在处理<code>TotalBsmtSF</code>时遇到了一个问题</p>
+<figure data-type="image" tabindex="23"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004409.png" alt="image-20200514000232393" loading="lazy"></figure>
+<figure data-type="image" tabindex="24"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004410.png" alt="image-20200514001004080" loading="lazy"></figure>
+<p>从图中可以看出，地下室面积有大量的0值，这显然打破了正态性，并且0值也不能用于log变换（即使可以，也不适合直接变换）。原文给出了一种解决方案：新增一个字段用来标明<code>TotalBsmtSF</code>是否为0，即对应表示是否有地下室，再对<code>TotalBsmtSF</code>中的非0值应用log变换。虽然作者表示不保证这种做法的正确性，但是感觉这种思路在处理非正态性数据时还是很有借鉴意义的。</p>
+<figure data-type="image" tabindex="25"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004411.png" alt="image-20200514001038176" loading="lazy"></figure>
+<figure data-type="image" tabindex="26"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004412.png" alt="image-20200514002250286" loading="lazy"></figure>
+<h4 id="同方差性">同方差性</h4>
+<p>寻找同方差的工作在一开始分析相关性的时候就做过了，而在将目标变量和特征变量的数据转换为正态分布的过程中，异方差性就已经消除了。对比一下转换前后<code>GrLivArea</code>和<code>SalePrice</code>的散点图可以知道，转换前的散点图呈现漏斗状，表现是GrLivArea较小时，SalePrice的方差较小，而随着GrLivArea的增大SalePrice越发发散即方差变大；转换后由于两者都近似服从正态分布，自然也就具备了同方差性</p>
+<figure data-type="image" tabindex="27"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004413.png" alt="image-20200514002315254" loading="lazy"></figure>
+<figure data-type="image" tabindex="28"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004303.png" alt="image-20200514003202175" loading="lazy"></figure>
+<p>到这里机器学习前期的数据分析工作基本就完成了，作者只是简单推进了一下基本套路，在实际工作中其实还有很多细节的处理工作，比如作者没有提及的非平衡样本的问题、时序特征的处理等，但套路都是基本想通的。</p>
+<hr>
+<p><strong>参考资料：</strong></p>
+<p>https://zhuanlan.zhihu.com/p/72398933</p>
+<p>https://zhuanlan.zhihu.com/p/25241653</p>
+<p>https://www.sohu.com/a/125526669_609133</p>
+<p>https://www.zhihu.com/question/278182454/answer/398539763</p>
+<p>https://zhuanlan.zhihu.com/p/53124278</p>
+<p>https://spssau.com/front/spssau/helps/visualization/ppqq.html</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[位运算的一些套路]]></title>
+        <id>https://wehonq.cn/post/Alth0SHh7/</id>
+        <link href="https://wehonq.cn/post/Alth0SHh7/">
+        </link>
+        <updated>2020-05-07T14:53:35.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="1-在明确知道补码整数类型对应位数为w时可以通过右移w-1位再与常数1做与操作来得到符号位数值">1. 在明确知道补码整数类型对应位数为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>时，可以通过右移<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>位再与常数1做与操作来得到符号位数值</h3>
+<p>假设int类型以4字节(32位bit)表示，则对应的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>为32，符号位计算方法如下：</p>
+<pre><code class="language-c++">int sign = (x &gt;&gt; 31) &amp; 1;
+</code></pre>
+<h3 id="2-几乎所有现代机器对右移操作都遵循以下原则有符号数补码使用算术右移左边填充符号位数值-无符号数使用逻辑右移左边填充0">2. 几乎所有现代机器对右移操作都遵循以下原则：有符号数(补码)使用<strong>算术右移(左边填充符号位数值)</strong>, 无符号数使用<strong>逻辑右移(左边填充0)</strong></h3>
+<p>假设int类型以8位bit表示，右移结果如下：</p>
+<pre><code class="language-c++">int x = 0x80; // 1000 0000
+unsigned int y = 0x80; // 1000 0000
+
+x = x &gt;&gt; 2;   // x = 0xE0 (1110 0000)
+y = y &gt;&gt; 2;   // y = 0x20 (0010 0000)
+</code></pre>
+<h3 id="3-二进制补码转换为十进制时最直观的方法是对各数位取对应2的幂级数后相加其中符号位幂级数取负值其余位幂级数取正值">3. 二进制补码转换为十进制时，最直观的方法是对各数位取对应2的幂级数后相加，其中符号位幂级数取负值，其余位幂级数取正值</h3>
+<p>对于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>位补码二进制串:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>=</mo><mo>[</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>2</mn></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>x</mi><mn>0</mn></msub><mo>]</mo></mrow><annotation encoding="application/x-tex">\vec x = [x_{w-1}, x_{w-2}, ..., x_0]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.714em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span>，转换为十进制操作定义为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mn>2</mn><msub><mi>T</mi><mi>w</mi></msub><mo>(</mo><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>)</mo></mrow><annotation encoding="application/x-tex">B2T_w(\vec x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">2</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>表示第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>位的数值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">x_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为最低位，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">x_{w-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>为最高位（符号位），则有：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mn>2</mn><msub><mi>T</mi><mi>w</mi></msub><mo>(</mo><mover accent="true"><mi>x</mi><mo>⃗</mo></mover><mo>)</mo><mo>=</mo><mo>−</mo><msub><mi>x</mi><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msub><msup><mn>2</mn><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>w</mi><mo>−</mo><mn>2</mn></mrow></munderover><msub><mi>x</mi><mi>i</mi></msub><msup><mn>2</mn><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">B2T_w(\vec x) = -x_{w-1}2^{w-1} + \sum_{i=0}^{w-2}x_i2^i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord">2</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.714em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.20772em;"><span class="overlay" style="height:0.714em;width:0.471em;"><svg width='0.471em' height='0.714em' style='width:0.471em' viewBox='0 0 471 714' preserveAspectRatio='xMinYMin'><path d='M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5
+3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11
+10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63
+-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1
+-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59
+H213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359
+c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.072439em;vertical-align:-0.208331em;"></span><span class="mord">−</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.864108em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:3.0787820000000004em;vertical-align:-1.277669em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8011130000000004em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.300005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mbin mtight">−</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8746639999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<h3 id="4-全0码-与-全1码-的应用">4. 全0码 与 全1码 的应用</h3>
+<p>假设x和y是8位整型数值，8位全0码为0x00，8位全1码为0xFF，则有如下公式成立：</p>
+<ol>
+<li>x &amp; 0x00 = 0</li>
+<li>x &amp; 0xFF = x</li>
+<li>x | 0x00 = x</li>
+<li>x | 0xFF = 0xFF</li>
+<li>x ^ 0x00 = x</li>
+<li>x ^ 0xFF = ~x</li>
+</ol>
+<h3 id="5-位操作补码整数取负">5. 位操作补码整数取负</h3>
+<blockquote>
+<p><strong>Trick</strong> ：“取反加1”</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * negate - return -x 
+ *   Example: negate(1) = -1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 5
+ *   Rating: 2
+ */
+int negate(int x) {
+  return ~x + 1;
+}
+</code></pre>
+<h3 id="6-位操作判断某些二进制位是否为1">6. 位操作判断某些二进制位是否为1</h3>
+<blockquote>
+<p><strong>Trick</strong> ：与掩码做&quot;与&quot;操作后的值如果与掩码相同则可以确定相应位置全为1</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * allOddBits - return 1 if all odd-numbered bits in word set to 1
+ *   where bits are numbered from 0 (least significant) to 31 (most significant)
+ *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 2
+ */
+int allOddBits(int x) {
+  int mask = 0xAA;
+  mask += (mask &lt;&lt; 8);
+  mask += (mask &lt;&lt; 16);
+  return !((mask &amp; x) ^ mask);
+}
+</code></pre>
+<h3 id="7-位操作判断一个数是否在取值范围内">7. 位操作判断一个数是否在取值范围内</h3>
+<blockquote>
+<p><strong>Trick</strong> ：要判断 a &lt;= x &lt;= b 是否成立, 可以转换为判断 x-a &gt;= 0 &amp;&amp; x-(b+1) &lt; 0 是否成立，进而转换为判断 x-a 和 x-(b+1) 的符号</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * isAsciiDigit - return 1 if 0x30 &lt;= x &lt;= 0x39 (ASCII codes for characters '0' to '9')
+ *   Example: isAsciiDigit(0x35) = 1.
+ *            isAsciiDigit(0x3a) = 0.
+ *            isAsciiDigit(0x05) = 0.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 15
+ *   Rating: 3
+ */
+int isAsciiDigit(int x) {
+  int lower = x + (~0x30 + 1);
+  int upper = x + (~0x3a + 1);
+  // return 1 if lower &gt;= 0 and upper &lt; 0
+  return !((lower &gt;&gt; 31) | ~(upper &gt;&gt; 31));
+}
+</code></pre>
+<h3 id="8-位操作实现三目运算">8. 位操作实现三目运算</h3>
+<blockquote>
+<p><strong>Trick</strong> ：bool型数值（0或1）取负正好可以得到全0码或全1码（0x00或0xFF）</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * conditional - same as x ? y : z 
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+  x = !!x;     // 0x01 or 0x00
+  x = ~x + 1;  // 0xff or 0x00
+  return (x &amp; y) | (~x &amp; z);
+}
+</code></pre>
+<h3 id="9-位操作判断两数大小">9. 位操作判断两数大小</h3>
+<blockquote>
+<p><strong>Trick</strong> ：判断符号相同或不同可以使用异或操作，符号不同时正数大，符号相同时判断差值</p>
+</blockquote>
+<pre><code class="language-c++">/* 
+ * isLessOrEqual - if x &lt;= y  then return 1, else return 0 
+ *   Example: isLessOrEqual(4,5) = 1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 24
+ *   Rating: 3
+ */
+int isLessOrEqual(int x, int y) {
+  int is_x_neg = (x &gt;&gt; 31);
+  int is_y_neg = (y &gt;&gt; 31);
+  int is_y_sub_x_neg = ((y + ~x + 1) &gt;&gt; 31);
+  int is_diff_sign = is_x_neg ^ is_y_neg;
+  return (!is_diff_sign &amp; !is_y_sub_x_neg) | (is_diff_sign &amp; !is_y_neg);
+}
+</code></pre>
+<h3 id="10-位操作实现否运算">10. 位操作实现“否”运算</h3>
+<pre><code class="language-c++">/* 
+ * logicalNeg - implement the ! operator, using all of 
+ *              the legal operators except !
+ *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
+ *   Legal ops: ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 4 
+ */
+int logicalNeg(int x) {
+  return ((x | (~x + 1)) &gt;&gt; 31) + 1;
+}
+</code></pre>
+<h3 id="11-位操作判断一个数最少需要多少bit表示">11. 位操作判断一个数最少需要多少bit表示</h3>
+<blockquote>
+<p><strong>Trick1</strong>：<br>
+若为正数，找到最高一位1，再加上一个符号位<br>
+若为负数，找到最高一位0，再加上一个符号位</p>
+<p>示例：<br>
+-3可以表示为101、1101、11101等，但最高以为0都是出现在第2位，当使用3位以上bit表示的时候高位均为1，所以最少需要2+1=3位bit来表示，也就是101</p>
+</blockquote>
+<blockquote>
+<p><strong>Trick2</strong>：<br>
+为了统一操作可以把负数转换为正数，则只要找最高位1即可</p>
+</blockquote>
+<blockquote>
+<p><strong>Trick3</strong>：<br>
+可以使用二分思想移位，来排除或确定某一半的高位是否存在1</p>
+<p>大致思想如下（x为n位二进制正数）：</p>
+<blockquote>
+<p>（1）令 b = x &gt;&gt; (n/2)，若 b = 0 表示高 n/2 位中不包含1，只需在低 n/2 位中寻找1即可，反之若 b != 0 则表示高 n/2 位中包含1。<br>
+（2）当 b != 0 时可以很容易想到令 x = x &gt;&gt; (n/2) 来移除低 n/2 位，再令 n = n/2 并重复步骤（1）来判断剩余一半的情况；而当 b = 0 时，需要考虑的是低 n/2 ，此时可以先令 n = n/2，再令 x = x &gt;&gt; (n/2) ，由于已经可以确定高 n/2 位全为0，此时只需要右移余下的一半（即 n/4）即可继续二分判断。</p>
+</blockquote>
+</blockquote>
+<pre><code class="language-c++">/* howManyBits - return the minimum number of bits required to represent x in
+ *             two's complement
+ *  Examples: howManyBits(12) = 5
+ *            howManyBits(298) = 10
+ *            howManyBits(-5) = 4
+ *            howManyBits(0)  = 1
+ *            howManyBits(-1) = 1
+ *            howManyBits(0x80000000) = 32
+ *  Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *  Max ops: 90
+ *  Rating: 4
+ */
+int howManyBits(int x) {
+  // 如果是负数取反, 统一转换为找最高位1
+  // is_neg = 0  --&gt; 0xff &amp; x --&gt; x
+  // is_neg = 1  --&gt; (0xfe &amp; x) | (0x01 &amp; ~x) --&gt; ~x
+  int is_neg = (x &gt;&gt; 31);
+  x = (~is_neg &amp; x) | (is_neg &amp; ~x);
+
+  // 二分法找最高位1
+  // 每次右移n/2或0位,来判断高位是否包含1并缩小搜索范围
+  int b16, b8, b4, b2, b1, b0;
+  b16 = (!!(x &gt;&gt; 16)) &lt;&lt; 4; // if high 16 bits has 1 b16 = 16 else b16 = 0
+  x = x &gt;&gt; b16;
+  b8 = (!!(x &gt;&gt; 8)) &lt;&lt; 3;
+  x = x &gt;&gt; b8;
+  b4 = (!!(x &gt;&gt; 4)) &lt;&lt; 2;
+  x = x &gt;&gt; b4;
+  b2 = (!!(x &gt;&gt; 2)) &lt;&lt; 1;
+  x = x &gt;&gt; b2;
+  b1 = !!(x &gt;&gt; 1);
+  x = x &gt;&gt; b1;
+  b0 = x;
+
+  return b16 + b8 + b4 + b2 + b1 + b0 + 1;
+}
+</code></pre>
+<h3 id="11-快速找到补码二进制最低位的1的位置">11. 快速找到补码二进制最低位的1的位置</h3>
+<blockquote>
+<p><strong>Trick</strong>: 二进制取负变换可以快速写成除最低位1之后的所有位都取反<br>
+例：假设x为8位bit表示的int，x = 12，则x和~x+1的二进制表示分别为：<br>
+0 0 0 0 1 1 0 0<br>
+1 1 1 1 0 1 0 0<br>
+x &amp; (~x + 1) 即可以得到只剩最低位1的二进制表示 0 0 0 0 0 1 0 0</p>
+</blockquote>
+<pre><code class="language-c++">int x = 12;
+unsigned int y = x &amp; (~x + 1);
+int pos = 0;
+while (y &gt; 0) {
+  y &gt;&gt;= 1;
+  ++pos;
+}
+// finally pos = 3
+</code></pre>
+]]></content>
+    </entry>
+</feed>

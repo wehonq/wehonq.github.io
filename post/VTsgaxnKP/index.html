@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>《Comprehensive data exploration with Python》阅读笔记 | WehonQ</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://wehonq.cn/favicon.ico?v=1589643508729">
+<link rel="stylesheet" href="https://wehonq.cn/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="原文是Kaggle上针对House Prices这个教学比赛的一篇入门教程，网上也是很多人推荐，看过之后确实是有一定的收获，应该算是一篇入坑的启蒙教程了。很早之前想入坑Kaggle的时候其实已经看过了，但一直没有系统整理过这方面的知识体系，..." />
+    <meta name="keywords" content="机器学习,数据分析,kaggle" />
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://wehonq.cn">
+        <img src="https://wehonq.cn/images/avatar.png?v=1589643508729" class="site-logo">
+        <h1 class="site-title">WehonQ</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      万物皆套路
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://wehonq.cn/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">《Comprehensive data exploration with Python》阅读笔记</h2>
+            <div class="post-date">2020-05-14</div>
+            
+            <div class="post-content" v-pre>
+              <p>原文是Kaggle上针对<em>House Prices</em>这个教学比赛的一篇入门教程，网上也是很多人推荐，看过之后确实是有一定的收获，应该算是一篇入坑的启蒙教程了。很早之前想入坑Kaggle的时候其实已经看过了，但一直没有系统整理过这方面的知识体系，这次决定把原文笔记整理出来，方便今后查阅，同时也挖几个坑来跳一下。</p>
+<p><em>原文链接：https://www.kaggle.com/pmarcelino/comprehensive-data-exploration-with-python</em></p>
+<p>对的，万物皆套路：</p>
+<blockquote>
+<p><strong>The most difficult thing in life is to know yourself</strong></p>
+</blockquote>
+<h1 id="分析和解决数据问题的一般套路">分析和解决数据问题的一般套路</h1>
+<ol>
+<li><strong>认识问题</strong>：认真研究每个变量，分析其对目标问题的意义和重要程度</li>
+<li><strong>目标分析</strong>：聚焦于目标字段，试图对其做更深入的了解</li>
+<li><strong>相关性分析</strong>：尝试分析特征和目标之间的相关性</li>
+<li><strong>数据预处理</strong>：清理数据集，处理缺失值、异常值以及类别特征</li>
+</ol>
+<p>下面就展开来谈了：</p>
+<h1 id="一-认识问题">一. 认识问题</h1>
+<p>拿到任务后的第一步就是要对问题和数据集有一个整体性的认识，包括每个特征的含义以及它与问题目标的相关性。这一步很重要，虽然非常耗时，但对全面掌握任务的全貌非常有帮助。</p>
+<p>文中给出了一种比较良好方法：</p>
+<p>按以下列表头的形式创建一个Excel表格，并逐行填写特征：</p>
+<ul>
+<li><strong>Variable</strong> - 特征名称</li>
+<li><strong>Type</strong> - 特征类型，数值型或类别型，分别对应连续型特征和离散型特征</li>
+<li><strong>Segment</strong> - 特征所反映实际问题某一方面的信息。文中针对房价预测问题给出了三个方面：building(物理建筑)、space(空间)、location(地理位置)。例如：OverallQual(整体完成品质) 反映了building方面的信息，TotalBsmtSF(地下室总面积) 反映了space方面的信息，Neighborhood(街区)反映了location方面的信息。</li>
+<li><strong>Expectation</strong> - 预期特征的重要程度，可以用“高”，“中”，“低”来表示</li>
+<li><strong>Conclusion</strong> - 观察数据后得出特征重要度的结论，同样用“高”，&quot;中&quot;，“低”来表示</li>
+<li><strong>Comments</strong> - 备注</li>
+</ul>
+<blockquote>
+<p>挖个坑：原文中对Type只定义了数值和类别型两种（下文可以看出作者将时间当做类别型看待），但感觉在某些任务中时间类型应该单独算作第三种类型，比如针对用户购买行为的任务，时序特征往往也是一种重要的参考，待研究</p>
+</blockquote>
+<p>为了填写<code>Expectation</code> ，在每遇到一个特征的时候，问自己几个问题（文中以房价预测为说明，可推广到其他问题）：</p>
+<ol>
+<li>当我们买房的时候是否会考虑这个特征？</li>
+<li>如果考虑，那这个特征的重要程度如何？</li>
+<li>这个特征所反映的信息是否已经由别的特征反映过了？</li>
+</ol>
+<p>通过这样的方式得到一系列Expectation标注为“高”的特征后，可以画出这些特征与房屋价格的散点图或箱型图，通过观察再来填写<code>Conclusion</code></p>
+<p>下面是根据以上方法得到的4个重要特征的示例表格：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004414.png" alt="image-20200514003124122" loading="lazy"></figure>
+<h1 id="二-目标分析">二. 目标分析</h1>
+<p>目标分析就是对因变量做一些统计学上的分析，比较常见的有判断目标分布的正态性等等</p>
+<p>首先观察一下目标<code>SalePrice</code>字段的基本信息，并且画出直方图：</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004350.png" alt="image-20200512004237776" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004351.png" alt="image-20200512001710378" loading="lazy"></figure>
+<p>能够观察到房屋价格呈现明显的正偏态分布，那就看一下偏度和峰度：</p>
+<blockquote>
+<p>挖个坑：偏度和峰度的意义</p>
+</blockquote>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004352.png" alt="image-20200512002203730" loading="lazy"></figure>
+<p>这里作者没有太详细去分析，只是简单过了一下，后续的数据预处理会有针对非正态分布的处理方法</p>
+<h1 id="三-相关性分析">三. 相关性分析</h1>
+<h2 id="直观分析">直观分析</h2>
+<p>先来看一下GrLivArea(地上居住面积)这个特征和房屋价格的关系：</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004353.png" alt="image-20200512002838149" loading="lazy"></figure>
+<p>可以看出居住面积与房屋价格基本呈现正线性关系。</p>
+<p>再来看看TotalBsmtSF(地下室总面积)与房屋价格的关系：</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004354.png" alt="image-20200512003345847" loading="lazy"></figure>
+<p>前半部分同样是正线性关系，但随着TotalBsmtSF增大到一定程度房屋价格就不再上升了。</p>
+<p>下面再看看两个类别型特征和房屋价格的关系，因为是类别特征，这里需要用箱型图取代散点图：</p>
+<blockquote>
+<p>挖个坑：各种数据分析图的用法套路</p>
+</blockquote>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004355.png" alt="image-20200512003530311" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004356.png" alt="image-20200512005001286" loading="lazy"></figure>
+<p>可以看出，质量越高的房屋售价越高，这很符合常理，而年代与房屋价格虽然呈现出新房价格更高，但不是特别明显，甚至某些很古老的房子价格反而更高，这其实也比较符合直觉，想想北上广深的二手房？</p>
+<p>总的来说，这一步得到了4个特征与目标价格之间的关系：</p>
+<ul>
+<li><code>居住面积</code>和<code>地下室面积</code>似乎与房屋价格呈现正线性关系，并且<code>地下室面积</code>的斜率更高</li>
+<li><code>完成质量</code>和<code>建筑年份</code>与房屋价格也有较强的关联，并且<code>完成质量</code>的影响程度更高</li>
+</ul>
+<p>以上这些做法还是比较偏主观的，基本是想到一个特征分析一个特征，并不能够很好的掌握数据的全貌，所以作者接下来给出了更加客观的方法：<strong>相关性矩阵热力图</strong> 、<strong>散点图矩阵</strong></p>
+<h2 id="相关性矩阵热力图">相关性矩阵热力图</h2>
+<p>首先是针对所有变量间的相关性热力图，这可以快速发现线性相关的变量，如下图中颜色越浅的表示正相关性越强，越深表示负相关性越强：</p>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004357.png" alt="image-20200512005027809" loading="lazy"></figure>
+<p>第二个是与房价正相关性靠前的10特征的相关性矩阵热力图，基本原理一样，只是简单筛选后加了个数值标签：</p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004358.png" alt="image-20200513003400414" loading="lazy"></figure>
+<p>通过观察这种相关性矩阵热力图可以比较方便的发现特征与目标之间的线性相关性，也可以发现特征与特征之间的相关性，前者用来发现特征重要性，后者用来做特征降维。比如<code>OverallQual</code>和<code>GrLivArea</code>就与<code>SalePrice</code>有较强的相关性，表示这两个特征都比较厉害，<code>GarageCars</code>和<code>GarageArea</code>相关性很强，表明这两个特征几乎表达了一样的信息，实际使用时保留一个即可。</p>
+<h2 id="散点图矩阵">散点图矩阵</h2>
+<p>接着是散点图矩阵图，这个图比起手动画出两两变量的散点图更加方便，能够一目了然的发现变量之间的联系，又是一个套路点。</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004359.png" alt="image-20200513005507074" loading="lazy"></figure>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004634.png" alt="img" loading="lazy"></figure>
+<p>原文分析得到了结论<code>TotalBsmtSF</code>和<code>TotalBsmtSF</code>的散点图具有明显的边界，这是符合直觉的，因为一般来说没有地下室面积比地上面积更大的，除非买的是一个地窖。</p>
+<h1 id="四-数据预处理">四. 数据预处理</h1>
+<p>在进行了一系列数据分析之后，对数据应该是已经有了一个大致的掌握了，接下来就应该着手处理数据了，我理解的预处理应该指的就是在运用模型算法之前对数据进行的通用性处理过程，即不介入特征工程的工作。原文主要介绍了三方面的预处理：<strong>缺失值处理</strong>、<strong>异常值处理</strong>和<strong>数据变换</strong>。</p>
+<h2 id="缺失值处理">缺失值处理</h2>
+<p>缺失值在真实场景中经常遇到，几乎成了数据分析和机器学习工程绕不开的一个步骤，是需要重点分析和处理的。很多模型工具包如XGBoost、LightGBM等虽然都可以支持缺失值的处理，但其处理方法往往都是机械性地，有条件的话还是应该尽量人工来处理。</p>
+<p>在处理缺失值的时候要关心下面两个问题：</p>
+<ul>
+<li>数据的缺失有多普遍？</li>
+<li>数据的缺失是随机的还是有规律的？</li>
+</ul>
+<p>这样做的目的是尽可能减少样本信息的损失，以及避免规律性的缺失导致数据存在隐藏的偏差。</p>
+<p>先打印一下缺失值情况的情况：</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004400.png" alt="image-20200513213446912" loading="lazy"></figure>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004401.png" alt="image-20200513220328487" loading="lazy"></figure>
+<p>原文给出了一个指导性原则，即当特征字段缺失比例超过15%的时候应该直接直接删除该特征，在这个问题中观察头部的几个缺失特征，确实是可以安全删除。此外，<code>GarageXX</code> <code>BsmtXX</code> <code>MasVnrXX</code>这三类特征虽然缺失比例不高，但由于与其他特征有较强的相关性，因此也可以安全删除。最后<code>Electrical</code>只有一条缺失数据，有理由相信是一个偶然因素导致的样本缺失，直接将对应的样本删除即可。</p>
+<p>总的来说原文实际上是删除了所有缺失的字段或者样本，并没有提到针对缺失值的填充方法，实际上真实场景下缺失值的处理是一个比较繁琐的过程，遇到一些不能删除的重要特征要想办法进行填充，填充的方法也有很多种，如固定值填充、均值填充、众数填充等。</p>
+<blockquote>
+<p>挖个坑：缺失值处理的套路</p>
+</blockquote>
+<h2 id="异常值处理">异常值处理</h2>
+<p>异常值也叫离群值，也是需要重点关注的问题，因为某些模型会对异常值非常敏感，此外，对异常值的分析可以帮助我们对特定行为的理解。原文分别用<strong>单变量分析</strong>和<strong>双变量分析</strong>两种方法来处理异常值：</p>
+<h3 id="单变量分析">单变量分析</h3>
+<p>主要就是针对变量自身的分布情况进行分析，划定一个置信阈值，在阈值范围以外的则认为是异常值，这里主要是通过标准化均值和方差来分析</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004402.png" alt="image-20200513220508275" loading="lazy"></figure>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004403.png" alt="image-20200513223446032" loading="lazy"></figure>
+<p>这里将房价做标准化后分别输出了最小和最大的10个值，通过观察可以发现</p>
+<ul>
+<li>最小的几个取值比较接近，且都比较接近标准均值0</li>
+<li>最大的几个取值差别较大，且离标准均值0都较远</li>
+</ul>
+<p>原文这里没有鲁莽的将任何值当做奇异值，但是给与了这两个7.xx的取值一定的关注</p>
+<h3 id="双变量分析">双变量分析</h3>
+<p>双变量分析的好处是可以从明显呈现相关性的散点图中发现不合群的数据，一般来说这种数据是异常值的可能性会比较大。</p>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004404.png" alt="image-20200513223504967" loading="lazy"></figure>
+<p>文中首先对上面<code>GrLivArea</code>和<code>SalePrice</code>的散点图进行了分析，可以明显看出红框的两个点有很大概率是异常值，因为他们独立于整体相关性分布之外。另外绿色圆圈内的两个点是之前通过单变量分析重点关注的两个7.xx的值，这里可以看出虽然他们的取值比较偏离均值，但由于其依然是处于整体相关性分布之内的，因此有理由相信这两个值是正常的，这里先给予保留。</p>
+<p>对<code>TotalBsmtSF</code>和<code>SalePrice</code>的散点图分析也类似，虽然乍一看绿色圆圈内的三个点是远离群体的，但由于其任然是处于整体相关性分布之内的，因此可以容忍性地先保留住。</p>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004405.png" alt="image-20200513225601483" loading="lazy"></figure>
+<h2 id="数据变换">数据变换</h2>
+<p>原味这部分给的标题是<em>Getting hard core</em>，实际上说的就是如何通过变换让数据满足统计学上的基础假设，从而更好的应用一些统计学的分析技术。作者引用 <a href="https://amzn.to/2uC3j9p">Hair et al. (2013)</a>说明了总共有四种假设需要验证：</p>
+<ul>
+<li><strong>正态性</strong> - 正态性指的是数据的分布应该要大致符合正态分布</li>
+<li><strong>同方差性</strong> - 指的是目标变量在特征变量的任何取值区间都具有相同的方差性</li>
+<li><strong>线性</strong> - 就是字面意思的线性相关</li>
+<li><strong>无相关性误差</strong> - 指的是一个错误与另一个错误有关联</li>
+</ul>
+<p>下面只讲正态性和同方差性</p>
+<h4 id="正态性">正态性</h4>
+<p>在检测数据是否符合正态分布时有两种常用的方法：<strong>直方图</strong>、<strong>P-P图</strong>或<strong>Q-Q图</strong></p>
+<figure data-type="image" tabindex="19"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004711.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="20"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004714.png" alt="img" loading="lazy"></figure>
+<p>这里先给出了房价的直方图和Q-Q图，可以明显发现是非正态的，幸运的是这个形态符合一个正偏态，因此做一个简单的log转换就可以修正：</p>
+<figure data-type="image" tabindex="21"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004407.png" alt="image-20200513235909537" loading="lazy"></figure>
+<figure data-type="image" tabindex="22"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004408.png" alt="image-20200514000204857" loading="lazy"></figure>
+<p>类似地，可以对相同情况的特征变量应用相同的变换，如<code>GrLivArea</code>。</p>
+<p>接下来，在处理<code>TotalBsmtSF</code>时遇到了一个问题</p>
+<figure data-type="image" tabindex="23"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004409.png" alt="image-20200514000232393" loading="lazy"></figure>
+<figure data-type="image" tabindex="24"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004410.png" alt="image-20200514001004080" loading="lazy"></figure>
+<p>从图中可以看出，地下室面积有大量的0值，这显然打破了正态性，并且0值也不能用于log变换（即使可以，也不适合直接变换）。原文给出了一种解决方案：新增一个字段用来标明<code>TotalBsmtSF</code>是否为0，即对应表示是否有地下室，再对<code>TotalBsmtSF</code>中的非0值应用log变换。虽然作者表示不保证这种做法的正确性，但是感觉这种思路在处理非正态性数据时还是很有借鉴意义的。</p>
+<figure data-type="image" tabindex="25"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004411.png" alt="image-20200514001038176" loading="lazy"></figure>
+<figure data-type="image" tabindex="26"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004412.png" alt="image-20200514002250286" loading="lazy"></figure>
+<h4 id="同方差性">同方差性</h4>
+<p>寻找同方差的工作在一开始分析相关性的时候就做过了，而在将目标变量和特征变量的数据转换为正态分布的过程中，异方差性就已经消除了。对比一下转换前后<code>GrLivArea</code>和<code>SalePrice</code>的散点图可以知道，转换前的散点图呈现漏斗状，表现是GrLivArea较小时，SalePrice的方差较小，而随着GrLivArea的增大SalePrice越发发散即方差变大；转换后由于两者都近似服从正态分布，自然也就具备了同方差性</p>
+<figure data-type="image" tabindex="27"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004413.png" alt="image-20200514002315254" loading="lazy"></figure>
+<figure data-type="image" tabindex="28"><img src="https://gitee.com/wehonq/pic/raw/master/20200514004303.png" alt="image-20200514003202175" loading="lazy"></figure>
+<p>到这里机器学习前期的数据分析工作基本就完成了，作者只是简单推进了一下基本套路，在实际工作中其实还有很多细节的处理工作，比如作者没有提及的非平衡样本的问题、时序特征的处理等，但套路都是基本想通的。</p>
+<hr>
+<p><strong>参考资料：</strong></p>
+<p>https://zhuanlan.zhihu.com/p/72398933</p>
+<p>https://zhuanlan.zhihu.com/p/25241653</p>
+<p>https://www.sohu.com/a/125526669_609133</p>
+<p>https://www.zhihu.com/question/278182454/answer/398539763</p>
+<p>https://zhuanlan.zhihu.com/p/53124278</p>
+<p>https://spssau.com/front/spssau/helps/visualization/ppqq.html</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://wehonq.cn/tag/CCHB6MJCt/" class="tag">
+                    机器学习
+                  </a>
+                
+                  <a href="https://wehonq.cn/tag/-BPg8Qg0Te/" class="tag">
+                    数据分析
+                  </a>
+                
+                  <a href="https://wehonq.cn/tag/oTdEKcI0bS/" class="tag">
+                    kaggle
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://wehonq.cn/post/Alth0SHh7/">
+                  <h3 class="post-title">
+                    位运算的一些套路
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>
