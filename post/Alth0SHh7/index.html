@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://wehonq.cn/favicon.ico?v=1589643761479">
+<link rel="shortcut icon" href="https://wehonq.cn/favicon.ico?v=1589644180175">
 <link rel="stylesheet" href="https://wehonq.cn/styles/main.css">
 
 
@@ -18,9 +18,9 @@
 
 
 
-    <meta name="description" content="1. 在明确知道补码整数类型对应位数为www时，可以通过右移w−1w-1w−1位再与常数1做与操作来得到符号位数值
-假设int类型以4字节(32位bit)表示，则对应的www为32，符号位计算方法如下：
-int sign = (x &gt;..." />
+    <meta name="description" content="主要是CSAPP课程配套datalab里面的题，还是挺有意思的，记录一下
+1. 在明确知道补码整数类型对应位数为www时，可以通过右移w−1w-1w−1位再与常数1做与操作来得到符号位数值
+假设int类型以4字节(32位bit)表示，则对应..." />
     <meta name="keywords" content="计算机" />
     
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -33,7 +33,7 @@ int sign = (x &gt;..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://wehonq.cn">
-        <img src="https://wehonq.cn/images/avatar.png?v=1589643761479" class="site-logo">
+        <img src="https://wehonq.cn/images/avatar.png?v=1589644180175" class="site-logo">
         <h1 class="site-title">WehonQ</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -99,7 +99,8 @@ int sign = (x &gt;..." />
             <div class="post-date">2020-05-07</div>
             
             <div class="post-content" v-pre>
-              <h3 id="1-在明确知道补码整数类型对应位数为w时可以通过右移w-1位再与常数1做与操作来得到符号位数值">1. 在明确知道补码整数类型对应位数为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>时，可以通过右移<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>位再与常数1做与操作来得到符号位数值</h3>
+              <p>主要是CSAPP课程配套datalab里面的题，还是挺有意思的，记录一下</p>
+<h3 id="1-在明确知道补码整数类型对应位数为w时可以通过右移w-1位再与常数1做与操作来得到符号位数值">1. 在明确知道补码整数类型对应位数为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>时，可以通过右移<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>位再与常数1做与操作来得到符号位数值</h3>
 <p>假设int类型以4字节(32位bit)表示，则对应的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>为32，符号位计算方法如下：</p>
 <pre><code class="language-c++">int sign = (x &gt;&gt; 31) &amp; 1;
 </code></pre>
